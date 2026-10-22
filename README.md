@@ -100,17 +100,37 @@ Where:
 
 ```python
 
+V = np.zeros(n_states)
 
 # -------------------------------------------------
 # Policy Evaluation Function
 # -------------------------------------------------
 
+def policy_evaluation(env, policy, gamma=0.99, theta=1e-8):
 
-# -------------------------------------------------
-# Display Output
-# -------------------------------------------------
+    V = np.zeros(env.observation_space.n)
+    iteration = 0
 
-# Change the parameters and observe the results
+    while True:
+        delta = 0
+
+        for state in range(env.observation_space.n):
+            v = V[state]
+            new_value = 0
+
+            for action, action_probability in enumerate(policy[state]):
+                for prob, next_state, reward, terminal in env.P[state][action]:
+                    new_value += action_probability * prob * (reward + gamma * V[next_state] * (not terminal))
+
+            V[state] = new_value
+            delta = max(delta, abs(v - V[state]))
+
+        iteration += 1
+
+        if delta < theta:
+            break
+
+    return V, iteration
 
 ```
 
@@ -120,13 +140,20 @@ Where:
 
 ```text
 
-Number of Iterations: 
+Name: Sai Hrishi M 
+Register Number: 212224240140 
+Number of iterations: 54
 
 State-Value Function as 4x4 Grid:
-
-
+[[0.0124 0.0104 0.0193 0.0095]
+ [0.0148 0.     0.0389 0.    ]
+ [0.0326 0.0843 0.1378 0.    ]
+ [0.     0.1703 0.4336 0.    ]]
 
 ```
+
+<img width="786" height="320" alt="image" src="https://github.com/user-attachments/assets/51729a5a-567f-488e-8982-2af9386ca277" />
+
 ---
 
 ## Result
